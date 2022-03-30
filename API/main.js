@@ -1,12 +1,21 @@
 const Koa = require("koa")
 const userRouter = require("./router/user");
-const bodyParser = require('koa-bodyparser');
+const path = require("path")
 const db = require("./db")
-
 let app = new Koa()
 
-
-app.use(bodyParser());
+const KoaBody = require("koa-body")
+app.use(KoaBody({
+  multipart: true,
+  formidable: {
+    uploadDir: path.join(__dirname, "./static/user"),
+    keepExtensions:true
+  }
+}))
+// 配置静态路径
+const Static = require("koa-static")
+app.use(Static(path.join(__dirname,"static")))
+app.use(Static(path.join(__dirname, "./public")))
 
 app.use(async (ctx, next)=> {
     ctx.set('Access-Control-Allow-Origin', '*');
